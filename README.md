@@ -7,7 +7,7 @@ Tiny boilerplate to take advantage of Webpack to build a simple React/Redux app.
 To use it, simply run the following commands:
 
 ```bash
-$ git clone git@github.com:Pygocentrus/webpack-react-es7-yarn.git && cd webpack-react-es7-yarn
+$ git clone git@github.com:Pygocentrus/webpack-react-es7-yarn-starter.git && cd webpack-react-es7-yarn
 $ rm -rf .git
 $ yarn # install dependencies
 $ npm run serve # starts a dev server on port 3000
