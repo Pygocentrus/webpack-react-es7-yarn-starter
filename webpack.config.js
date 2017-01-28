@@ -5,11 +5,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
+const APP = 'app';
+const DIST = 'dist';
 const ENV = process.env.NODE_ENV || 'development';
-const PRODUCTION = ENV === 'production';
+const pathTo = (paths = []) => path.resolve(__dirname, ...paths);
 
 module.exports = {
-  context: __dirname + "/app",
+  context: pathTo([APP]),
 
   entry: {
     js: './scripts/app.js',
@@ -18,18 +20,18 @@ module.exports = {
   },
 
   output: {
+    path: pathTo([DIST]),
     filename: 'bundle.js',
     chunkFilename: '[name].chunk-[hash].js',
-    path: __dirname + '/dist',
   },
 
   resolve: {
     extensions: ['', '.js', '.jsx', '.json'],
-    root: path.resolve(__dirname, './app/scripts'),
+    root: pathTo([APP, 'scripts']),
   },
 
   devServer: {
-    outputPath: __dirname + '/dist',
+    outputPath: pathTo([DIST]),
     hot: true,
     port: 3000,
   },
@@ -61,8 +63,13 @@ module.exports = {
   postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ],
 
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin([DIST]),
     new ExtractTextPlugin('app.css', { allChunks: true }),
-    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify(ENV) } }),
+    new webpack.DefinePlugin({ '__ENV__': JSON.stringify(ENV) }),
+    new webpack.HotModuleReplacementPlugin(),
+    new CopyWebpackPlugin([
+      { from: pathTo([APP, 'img']), to: pathTo([DIST, 'img']) },
+      { from: pathTo([APP, 'fonts']), to: pathTo([DIST, 'fonts']) },
+    ]),
   ],
 }

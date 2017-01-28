@@ -1,3 +1,19 @@
 body {
-  color: tomato;
+  margin: 0;
+  padding: 0;
+  color: #FFFFFF;
+  background-color: #33CCCC;
+}
+
+h1 {
+  position: absolute;
+  transform: translateX(-50%) translateY(-50%);
+  left: 50%;
+  top: 50%;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-console.log('ENV:', process.env.NODE_ENV);
+console.log('ENV:', __ENV__);
 
 require.ensure([], (require) => {
   const utils = require('./utils');
@@ -9,6 +9,6 @@ require.ensure([], (require) => {
 });
 
 const App = () =>
-  <h1>Hello there!</h1>;
+  <h1>Webpack Yarn React ES7 starter kit</h1>;
 
 render(<App />, document.getElementById('app'));
