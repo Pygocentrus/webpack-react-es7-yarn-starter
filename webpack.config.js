@@ -23,7 +23,9 @@ const plugins = [
 
 if (ENV === 'production') {
   plugins.push(
-    new webpack.optimize.UglifyJsPlugin({ comments: false, sourceMap: true, warnings: false })
+    new webpack.optimize.UglifyJsPlugin({ comments: false, sourceMap: true, warnings: false }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.AggressiveMergingPlugin()
   );
 }
 
