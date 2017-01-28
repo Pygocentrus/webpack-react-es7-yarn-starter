@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.config.js",
-    "serve": "webpack-dev-server --hot --inline --progress --colors --devtool source-map --config webpack.config.js"
+    "serve": "webpack-dev-server --inline --progress --colors --config webpack.config.js"
   },
   "dependencies": {
     "lodash": "^4.17.3",

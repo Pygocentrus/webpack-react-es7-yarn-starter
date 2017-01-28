@@ -4,35 +4,55 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const pkg = require('./package.json');
 
 const APP = 'app';
 const DIST = 'dist';
 const ENV = process.env.NODE_ENV || 'development';
+const PRODUCTION = ENV === 'production';
+const dependencies = Object.keys(pkg.dependencies) || [];
 const pathTo = (paths = []) => path.resolve(__dirname, ...paths);
 
 const plugins = [
   new CleanWebpackPlugin([DIST]),
   new ExtractTextPlugin('app.css', { allChunks: true }),
-  new webpack.DefinePlugin({ '__ENV__': JSON.stringify(ENV) }),
   new webpack.HotModuleReplacementPlugin(),
+  new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify(ENV) } }),
+  new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
   new CopyWebpackPlugin([
     { from: pathTo([APP, 'img']), to: pathTo([DIST, 'img']) },
     { from: pathTo([APP, 'fonts']), to: pathTo([DIST, 'fonts']) },
   ]),
 ];
 
-if (ENV === 'production') {
+if (PRODUCTION) {
   plugins.push(
     new webpack.optimize.UglifyJsPlugin({ comments: false, sourceMap: true, warnings: false }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.AggressiveMergingPlugin()
+    new webpack.optimize.AggressiveMergingPlugin(),
+    new webpack.optimize.DedupePlugin()
   );
 }
 
 module.exports = {
+  stats: { warnings: !PRODUCTION },
+
+  devtool: PRODUCTION ? 'cheap-module-source-map': 'cheap-module-eval-source-map',
+
+  devServer: {
+    outputPath: pathTo([DIST]),
+    hot: true,
+    port: 3000,
+  },
+
+  resolve: {
+    extensions: ['', '.js', '.jsx', '.json'],
+    root: pathTo([APP, 'scripts']),
+  },
+
   context: pathTo([APP]),
 
   entry: {
+    vendor: dependencies,
     js: './scripts/app.js',
     css: './styles/app.scss',
     html: './index.html',
@@ -42,17 +62,6 @@ module.exports = {
     path: pathTo([DIST]),
     filename: 'bundle.js',
     chunkFilename: '[name].chunk-[hash].js',
-  },
-
-  resolve: {
-    extensions: ['', '.js', '.jsx', '.json'],
-    root: pathTo([APP, 'scripts']),
-  },
-
-  devServer: {
-    outputPath: pathTo([DIST]),
-    hot: true,
-    port: 3000,
   },
 
   module: {
