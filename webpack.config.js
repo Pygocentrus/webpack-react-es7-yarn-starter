@@ -61,7 +61,7 @@ module.exports = {
   output: {
     path: pathTo([DIST]),
     filename: 'bundle.js',
-    chunkFilename: '[name].chunk-[hash].js',
+    chunkFilename: '[name].[chunkhash].js',
   },
 
   module: {
