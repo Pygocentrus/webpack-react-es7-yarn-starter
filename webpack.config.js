@@ -10,6 +10,23 @@ const DIST = 'dist';
 const ENV = process.env.NODE_ENV || 'development';
 const pathTo = (paths = []) => path.resolve(__dirname, ...paths);
 
+const plugins = [
+  new CleanWebpackPlugin([DIST]),
+  new ExtractTextPlugin('app.css', { allChunks: true }),
+  new webpack.DefinePlugin({ '__ENV__': JSON.stringify(ENV) }),
+  new webpack.HotModuleReplacementPlugin(),
+  new CopyWebpackPlugin([
+    { from: pathTo([APP, 'img']), to: pathTo([DIST, 'img']) },
+    { from: pathTo([APP, 'fonts']), to: pathTo([DIST, 'fonts']) },
+  ]),
+];
+
+if (ENV === 'production') {
+  plugins.push(
+    new webpack.optimize.UglifyJsPlugin({ comments: false, sourceMap: true, warnings: false })
+  );
+}
+
 module.exports = {
   context: pathTo([APP]),
 
@@ -47,10 +64,7 @@ module.exports = {
           presets: ['es2015', 'stage-0', 'react'],
         }
       },
-      {
-        test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('css!postcss!sass'),
-      },
+      { test: /\.scss$/, loader: ExtractTextPlugin.extract('css!postcss!sass') },
       { test: /\.html$/, loader: 'file?name=[name].[ext]' },
       { test: /\.(png|jpg|gif|jpeg)$/, loader: 'url-loader?limit=8192' },
       { test: /\.woff(2)?(\?v=[\d]\.[\d]\.[\d])?$/, loader: 'url-loader?limit=10000&minetype=application/font-woff' },
@@ -62,14 +76,5 @@ module.exports = {
 
   postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ],
 
-  plugins: [
-    new CleanWebpackPlugin([DIST]),
-    new ExtractTextPlugin('app.css', { allChunks: true }),
-    new webpack.DefinePlugin({ '__ENV__': JSON.stringify(ENV) }),
-    new webpack.HotModuleReplacementPlugin(),
-    new CopyWebpackPlugin([
-      { from: pathTo([APP, 'img']), to: pathTo([DIST, 'img']) },
-      { from: pathTo([APP, 'fonts']), to: pathTo([DIST, 'fonts']) },
-    ]),
-  ],
+  plugins,
 }
